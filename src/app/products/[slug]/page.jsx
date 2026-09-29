@@ -2,6 +2,30 @@ import { getProductBySlug } from '@/lib/contentful';
 import QuoteForm from '@/components/QuoteForm';
 import { notFound } from 'next/navigation';
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return {
+      title: 'Product Not Found | PAK COLOUR & CHEMICAL',
+    };
+  }
+
+  const { title, casNumber, grade, category } = product.fields;
+  const categoryName = category?.fields?.title || 'Chemical & Color';
+
+  return {
+    title: `${title} ${casNumber ? `(CAS: ${casNumber})` : ''} | PAK COLOUR & CHEMICAL`,
+    description: `Request bulk quotation and technical documents (MSDS/TDS) for ${title}. ${categoryName} supplied in ${grade || 'Industrial Grade'}.`,
+    openGraph: {
+      title: `${title} | PAK COLOUR & CHEMICAL`,
+      description: `Request quotations and MSDS documentation for ${title} (${casNumber ? `CAS: ${casNumber}` : 'Industrial Grade'}).`,
+      type: 'website',
+    },
+  };
+}
+
 export default async function ProductDetailPage({ params }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
