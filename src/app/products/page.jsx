@@ -1,5 +1,6 @@
 import { getProducts, getCategories } from '@/lib/contentful';
 import ProductCatalog from '@/components/ProductCatalog';
+import Navbar from '@/components/Navbar';
 
 export const metadata = {
   title: 'Product Catalog | PAK COLOUR & CHEMICAL',
@@ -22,15 +23,18 @@ export default async function ProductsPage() {
   ]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-12 space-y-10">
-      <div>
-        <h1 className="text-4xl font-extrabold text-slate-900">Product Catalog</h1>
-        <p className="text-slate-600 mt-2">
-          Explore our complete range of industrial colors, dyes, and specialized chemical solutions.
-        </p>
-      </div>
+    <>
+      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 py-12 space-y-10">
+        <div>
+          <h1 className="text-4xl font-extrabold text-slate-900">Product Catalog</h1>
+          <p className="text-slate-600 mt-2">
+            Explore our complete range of industrial colors, dyes, and specialized chemical solutions.
+          </p>
+        </div>
 
-      <ProductCatalog initialProducts={products} categories={categories} />
-    </main>
+        <ProductCatalog initialProducts={products} categories={categories} />
+      </main>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import { Montserrat, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { QuoteProvider } from "@/components/QuoteContext";
 import QuoteModal from "@/components/QuoteModal";
-import Navbar from "@/components/Navbar";
+
 
 const montserrat = Montserrat({
   variable: "--font-display",
@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-[#F4F6F5] text-[#0A2540] font-[family-name:var(--font-body)] selection:bg-[#0A2540] selection:text-white">
         <QuoteProvider>
-          <Navbar />
+      
           {children}
           <QuoteModal />
         </QuoteProvider>

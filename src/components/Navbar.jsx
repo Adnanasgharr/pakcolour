@@ -125,7 +125,7 @@ export default function Navbar() {
             className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#E8A317] hover:bg-[#d4960f] active:scale-[0.98] text-[#0A2540] font-[family-name:var(--font-display)] font-semibold px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-md transition text-xs sm:text-sm shadow-sm shrink-0"
           >
             <span className="hidden xs:inline">Request a quote</span>
-            <span className="xs:hidden">Quote</span>
+            <span className="xs:hidden">Request a Quote</span>
             <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 

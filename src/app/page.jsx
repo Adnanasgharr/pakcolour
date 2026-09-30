@@ -1,18 +1,19 @@
-﻿import { QuoteProvider } from "@/components/QuoteContext";
-import Navbar from "@/components/Navbar";
 import Home from "@/components/Home";
 import FeaturedProducts from "@/components/FeaturedProducts";
-import QuoteModal from "@/components/QuoteModal";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+export const revalidate = 60; // refresh Contentful data every minute
 
 export default function Page() {
   return (
-    <QuoteProvider>
+    <>
       <Navbar />
       <main className="flex-1">
         <Home />
         <FeaturedProducts />
       </main>
-      <QuoteModal />
-    </QuoteProvider>
+      <Footer />
+    </>
   );
 }
