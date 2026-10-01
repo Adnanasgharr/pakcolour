@@ -8,8 +8,8 @@ import { useQuote } from "@/components/QuoteContext";
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "Product Catalog", href: "/products" },
-  { label: "Industries Served", href: "/industries" },
-  { label: "About Us", href: "/about" },
+  { label: "Company", href: "/company" },
+
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -103,8 +103,8 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#E8A317] shrink-0" />
-                <a href="tel:+923333023307" className="hover:text-white transition">
-                  +92 333 3023307
+                <a href="tel:+923333499966" className="hover:text-white transition">
+                  +92 333 3499966
                 </a>
               </li>
               <li className="flex items-center gap-3">

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -14,15 +13,11 @@ import {
   Boxes,
   Layers,
   ArrowUpRight,
+  ChevronRight,
   FileText,
 } from "lucide-react";
 import { useQuote } from "@/components/QuoteContext";
-
-const HERO_TAGLINES = [
-  ["Color possibilities.", "Built on partnerships."],
-  ["Your trusted partner", "for chemical solutions."],
-  ["Quality chemicals.", "Reliable supply."],
-];
+import ProductCard from "@/components/ProductCard";
 
 const TRUST_POINTS = [
   {
@@ -47,173 +42,299 @@ const TRUST_POINTS = [
   },
 ];
 
+const FEATURED_COUNT = 3;
+
 const CATEGORIES = [
   {
+    number: "01",
     icon: Droplets,
     title: "Industrial Dyes",
-    body: "Reactive, acid, and disperse dyes for textile and leather processing.",
+    short: "DYES",
+    body: "Reactive, acid, and disperse dyes engineered for textile and leather processing.",
   },
   {
+    number: "02",
     icon: Layers,
     title: "Pigments & Colours",
-    body: "Organic and inorganic pigments for paints, coatings, and plastics.",
+    short: "COLOUR",
+    body: "Organic and inorganic pigments for paints, coatings, plastics, and industrial applications.",
   },
   {
+    number: "03",
     icon: FlaskConical,
     title: "Specialty Chemicals",
-    body: "Process and performance chemicals sourced to your specification.",
+    short: "SPECIALTY",
+    body: "Process and performance chemicals sourced according to your technical specification.",
   },
   {
+    number: "04",
     icon: PackageSearch,
     title: "Textile Auxiliaries",
-    body: "Wetting agents, levelling agents, and finishing chemicals.",
+    short: "TEXTILE",
+    body: "Wetting, levelling, finishing, and process chemicals for modern textile production.",
   },
 ];
 
-export default function Home() {
+// Whole homepage in one file. `products` comes from Contentful via page.js.
+export default function Home({ products = [] }) {
   const { openQuote } = useQuote();
-  const [heroIndex, setHeroIndex] = useState(0);
 
-  // Cycle tagline every 3.5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % HERO_TAGLINES.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
+  // Tick a Boolean "featured" field on products in Contentful to choose them;
+  // otherwise the first few products are shown.
+  const flagged = products.filter((p) => p.fields?.featured === true);
+  const featuredProducts = (flagged.length > 0 ? flagged : products).slice(0, FEATURED_COUNT);
 
   return (
-    <>
-      {/* Hero */}
-      <section className="relative bg-[#F4F6F5] min-h-[500px] md:min-h-[560px] flex items-center overflow-hidden">
-        {/* Background image layer */}
-        <div className="absolute inset-0 z-0 flex justify-end">
-          <div className="relative w-full md:w-[65%] lg:w-[70%] h-full">
-            <Image
-              src="/hero.jpg"
-              alt="Chemical supply manufacturing background"
-              fill
-              priority
-              className="object-contain object-right"
-              sizes="100vw"
-            />
-            {/* Blend gradient on the left edge of the image */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#F4F6F5] via-[#F4F6F5]/40 via-[12%] to-transparent pointer-events-none" />
-          </div>
+    // page.js already wraps this in <main>, so this is a div, not another <main>
+    <div className="bg-[#F4F6F5] text-[#0A2540] overflow-hidden">
+
+      {/* =========================================================
+          HERO
+      ========================================================= */}
+      <section className="relative h-[80vh] flex items-start pt-16 md:pt-24 pb-8 overflow-hidden border-b border-[#D8DEE4]">
+
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/hero.jpg"
+            alt="Chemical supply and manufacturing"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+
+          <div className="absolute inset-0 bg-[#F4F6F5]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F4F6F5] via-[#F4F6F5]/80 via-[42%] to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#F4F6F5] via-transparent to-transparent" />
         </div>
 
-        {/* Foreground content */}
-        <div className="relative z-10 max-w-6xl px-6 md:px-12 py-12 md:py-20 w-full">
-          <div className="max-w-xl space-y-6">
-            <div className="grid">
-              {HERO_TAGLINES.map((lines, i) => (
-                <h1
-                  key={lines.join(" ")}
-                  className={`col-start-1 row-start-1 text-3xl sm:text-4xl lg:text-5xl leading-[1.15] font-[family-name:var(--font-display)] font-bold text-[#0A2540] tracking-tight transition-opacity duration-300 ease-in-out ${
-                    i === heroIndex ? "opacity-100" : "opacity-0 pointer-events-none"
-                  }`}
-                >
-                  <span className="block">{lines[0]}</span>
-                  <span className="block">{lines[1]}</span>
-                </h1>
-              ))}
-            </div>
+        {/* Hero content */}
+        <div className="relative z-10 w-full px-6 md:px-12 lg:px-16">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="flex flex-col gap-6 md:gap-8">
 
-            <p className="text-slate-800 text-base md:text-lg leading-relaxed font-medium bg-[#F4F6F5]/85 backdrop-blur-sm p-3 rounded-md -ml-3">
-              We supply industrial dyes, pigments, and specialty chemicals to
-              manufacturers across Pakistan — sourced against your
-              specification, delivered on your timeline.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <button
-                onClick={() => openQuote()}
-                className="inline-flex items-center gap-2 bg-[#0A2540] hover:bg-[#0d2f52] text-white font-[family-name:var(--font-display)] font-semibold px-6 py-3.5 rounded-md transition text-sm shadow-md"
-              >
-                Request a quotation
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 bg-white/90 hover:bg-white text-[#0A2540] border border-[#D8DEE4] font-[family-name:var(--font-display)] font-semibold px-6 py-3.5 rounded-md transition text-sm shadow-sm backdrop-blur-sm"
-              >
-                Browse the catalogue
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust strip */}
-      <section className="bg-white border-y border-[#D8DEE4] px-6 md:px-12 py-12">
-        <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {TRUST_POINTS.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="flex gap-3">
-              <Icon className="w-5 h-5 text-[#0A2540] shrink-0 mt-0.5" strokeWidth={1.75} />
-              <div>
-                <h3 className="font-[family-name:var(--font-display)] font-semibold text-[#0A2540] text-sm">
-                  {title}
-                </h3>
-                <p className="text-slate-500 text-sm mt-1 leading-relaxed">{body}</p>
+              {/* Heading */}
+              <div className="lg:col-span-8">
+                <div className="grid">
+                  <h1 className="col-start-1 row-start-1 max-w-4xl text-[2.75rem] sm:text-5xl md:text-6xl lg:text-[5rem] xl:text-[4.5rem] leading-[0.92] tracking-[-0.045em] font-[family-name:var(--font-display)] font-semibold">
+                    <span className="block">Color possibilities.</span>
+                    <span className="block">Built on partnerships.</span>
+                  </h1>
+                </div>
               </div>
+
+              {/* Description / CTA */}
+              <div>
+                <div className="max-w-sm">
+                  <p className="text-base md:text-[17px] leading-relaxed text-[#0A2540]/80">
+                    We supply industrial dyes, pigments, and specialty
+                    chemicals to manufacturers across Pakistan — sourced
+                    against your specification and delivered on your timeline.
+                  </p>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => openQuote()}
+                      className="inline-flex items-center gap-2 bg-[#0A2540] hover:bg-[#0d2f52] text-white font-[family-name:var(--font-display)] font-semibold px-6 py-3.5 rounded-md transition text-sm shadow-md"
+                    >
+                      Request a quotation
+                      <ArrowUpRight className="w-4 h-4" />
+                    </button>
+
+                    <Link
+                      href="/products"
+                   
+
+                       className="inline-flex items-center gap-2  font-[family-name:var(--font-display)] font-semibold px-6 py-3.5 rounded-md transition text-sm shadow-md hover:bg-white bg-white/75 border-[#0A2540]/20"
+                    >
+                      Catalogue
+                      <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
             </div>
-          ))}
+          </div>
         </div>
+
       </section>
 
-      {/* Categories */}
-      <section className="px-6 md:px-12 py-16 md:py-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="max-w-xl mb-10">
-            <h2 className="text-2xl md:text-3xl font-[family-name:var(--font-display)] font-semibold text-[#0A2540]">
-              What we supply
-            </h2>
-            <p className="text-slate-600 mt-2 leading-relaxed">
-              Four product lines, each sourced and quality-checked before it ships.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {CATEGORIES.map(({ icon: Icon, title, body }) => (
-              <div
-                key={title}
-                onClick={() => openQuote({ category: title })}
-                className="group border border-[#D8DEE4] rounded-lg p-6 bg-white hover:border-[#0A2540] transition cursor-pointer"
-              >
-                <Icon className="w-6 h-6 text-[#0A2540]" strokeWidth={1.75} />
-                <h3 className="font-[family-name:var(--font-display)] font-semibold text-[#0A2540] mt-4">
-                  {title}
-                </h3>
-                <p className="text-slate-500 text-sm mt-1.5 leading-relaxed">{body}</p>
-                <span className="inline-flex items-center gap-1 text-sm text-[#0A2540] font-medium mt-4 opacity-70 group-hover:opacity-100 transition">
-                  Request quote
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </span>
+
+      {/* =========================================================
+          HORIZONTAL TRUST BAR
+      ========================================================= */}
+      <section className="bg-white px-6 md:px-12 lg:px-16 py-10 md:py-12 border-b border-[#D8DEE4]">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+            {TRUST_POINTS.map(({ icon: Icon, title, body }) => (
+              <div key={title} className="flex gap-3.5 items-start">
+                <Icon
+                  className="w-5 h-5 text-[#0A2540] shrink-0 mt-0.5"
+                  strokeWidth={1.75}
+                />
+                <div>
+                  <h3 className="text-sm md:text-base font-semibold text-[#0A2540] leading-tight">
+                    {title}
+                  </h3>
+                  <p className="text-xs md:text-sm text-slate-500 mt-1 leading-relaxed">
+                    {body}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Floating actions */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+
+      {/* =========================================================
+          FEATURED PRODUCTS
+      ========================================================= */}
+      {featuredProducts.length > 0 && (
+        <section className="bg-[#F4F6F5] border-b border-[#D8DEE4] px-6 md:px-12 lg:px-16 py-16 md:py-20">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+              <div className="max-w-xl">
+                <h2 className="text-2xl md:text-3xl font-[family-name:var(--font-display)] font-semibold text-[#0A2540]">
+                  Featured Stock
+                </h2>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Frequently requested industrial chemicals, available for immediate dispatch across Pakistan.
+                </p>
+              </div>
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0A2540] hover:text-[#E8A317] transition"
+              >
+                View all products
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.sys?.id || product.fields?.slug} product={product} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+
+      {/* =========================================================
+          PRODUCT LINES
+      ========================================================= */}
+      <section className="bg-white px-6 md:px-12 lg:px-16 py-20 md:py-28 lg:py-32">
+        <div className="max-w-[1400px] mx-auto">
+
+          <div className="grid lg:grid-cols-12 gap-8 mb-14 md:mb-20">
+            <div className="lg:col-span-3">
+              <span className="text-[10px] uppercase tracking-[0.25em] font-semibold text-[#0A2540]/50">
+                03 / Product lines
+              </span>
+            </div>
+
+            <div className="lg:col-span-7">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl leading-[0.98] tracking-[-0.045em] font-[family-name:var(--font-display)] font-semibold">
+                Materials for industries that keep moving.
+              </h2>
+            </div>
+          </div>
+
+          {/* Product list: each row opens the quote modal with its category */}
+          <div className="border-t border-[#0A2540]/20">
+            {CATEGORIES.map(({ number, icon: Icon, title, short, body }) => (
+              <div
+                key={title}
+                role="button"
+                tabIndex={0}
+                onClick={() => openQuote({ category: title })}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openQuote({ category: title });
+                  }
+                }}
+                className="group w-full text-left border-b border-[#0A2540]/15 py-7 md:py-9 lg:py-10 transition-all duration-500 hover:px-3 md:hover:px-6 cursor-pointer"
+              >
+                <div className="grid grid-cols-12 gap-4 md:gap-8 items-center">
+
+                  {/* Number */}
+                  <div className="col-span-2 md:col-span-1">
+                    <span className="text-xs font-semibold opacity-40">
+                      {number}
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <div className="hidden md:block md:col-span-1">
+                    <div className="w-10 h-10 rounded-full border border-[#0A2540]/20 flex items-center justify-center transition-all duration-500 group-hover:bg-[#0A2540] group-hover:text-white group-hover:border-[#0A2540]">
+                      <Icon className="w-4 h-4" strokeWidth={1.5} />
+                    </div>
+                  </div>
+
+                  {/* Name */}
+                  <div className="col-span-7 md:col-span-4">
+                    <span className="block text-[9px] tracking-[0.2em] uppercase opacity-40 mb-1.5">
+                      {short}
+                    </span>
+                    <h3 className="text-xl md:text-2xl lg:text-[2rem] leading-tight tracking-[-0.03em] font-[family-name:var(--font-display)] font-semibold">
+                      {title}
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <div className="hidden lg:block lg:col-span-4">
+                    <p className="text-sm leading-relaxed text-[#0A2540]/55 max-w-sm">
+                      {body}
+                    </p>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="col-span-3 md:col-span-2 flex justify-end">
+                    <div className="w-9 h-9 md:w-11 md:h-11 rounded-full border border-[#0A2540]/20 flex items-center justify-center transition-all duration-500 group-hover:bg-[#0A2540] group-hover:text-white group-hover:border-[#0A2540] group-hover:rotate-45">
+                      <ArrowUpRight className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================
+          FLOATING ACTIONS
+      ========================================================= */}
+      <div className="fixed bottom-5 right-5 md:bottom-7 md:right-7 flex flex-col gap-2.5 z-40">
         <a
           href="https://wa.me/923333023307"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-[#1F7A5C] hover:bg-[#186349] text-white text-sm font-semibold pl-4 pr-5 py-3.5 rounded-full shadow-lg flex items-center gap-2.5 transition"
+          aria-label="Contact us on WhatsApp"
+          className="bg-[#1F7A5C] text-white rounded-full pl-4 pr-5 py-3.5 shadow-xl flex items-center gap-2.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
         >
-          <MessageCircle className="w-5 h-5" />
-          WhatsApp
+          <MessageCircle className="w-5 h-5" strokeWidth={1.75} />
+          <span className="text-sm font-semibold">WhatsApp</span>
         </a>
+
         <button
+          type="button"
           onClick={() => openQuote()}
-          className="bg-[#0A2540] hover:bg-[#0d2f52] text-white text-sm font-semibold pl-4 pr-5 py-3.5 rounded-full shadow-lg flex items-center gap-2.5 transition"
+          aria-label="Request a quotation"
+          className="bg-[#0A2540] text-white rounded-full pl-4 pr-5 py-3.5 shadow-xl flex items-center gap-2.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
         >
-          <FileText className="w-5 h-5" />
-          Request Quote
+          <FileText className="w-5 h-5" strokeWidth={1.75} />
+          <span className="text-sm font-semibold">Request Quote</span>
         </button>
       </div>
-    </>
+
+    </div>
   );
 }
-

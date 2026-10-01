@@ -15,7 +15,8 @@ import { getProductBySlug } from '@/lib/contentful';
 import { getProductImage } from '@/lib/productImage';
 
 import ProductQuoteButton from '@/components/ProductQuoteButton';
-import QuoteForm from '@/components/QuoteForm';
+import Navbar from '@/components/Navbar';
+
 
 export const revalidate = 60;
 
@@ -81,7 +82,7 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <>
-      
+      <Navbar/>
 
       <main className="flex-1 font-[family-name:var(--font-body)]">
         {/* Breadcrumb */}
@@ -207,21 +208,7 @@ export default async function ProductDetailPage({ params }) {
           </div>
         </section>
 
-        {/* Inquiry form */}
-        <section className="bg-white border-y border-[#D8DEE4] px-6 md:px-12 py-14">
-          <div className="max-w-3xl mx-auto space-y-6">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-[family-name:var(--font-display)] font-semibold text-[#0A2540]">
-                Send an inquiry
-              </h2>
-              <p className="text-slate-600 mt-2 leading-relaxed">
-                Tell us the quantity and delivery location for {fields.title} and we&apos;ll come
-                back with pricing and documentation.
-              </p>
-            </div>
-            <QuoteForm initialProductName={fields.title} />
-          </div>
-        </section>
+     
       </main>
     </>
   );
