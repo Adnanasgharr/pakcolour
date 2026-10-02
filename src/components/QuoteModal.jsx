@@ -4,7 +4,7 @@ import { useState } from "react";
 import { MessageCircle, Send, X, Check } from "lucide-react";
 import { useQuote } from "@/components/QuoteContext";
 
-const WHATSAPP_NUMBER = "923333023307";
+const WHATSAPP_NUMBER = "923333499966";
 const RFQ_EMAIL = "pakcolourchemical@outlook.com";
 
 const CATEGORY_OPTIONS = [
