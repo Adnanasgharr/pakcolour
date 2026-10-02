@@ -237,23 +237,73 @@ export default function Home({ products = [] }) {
       )}
 
       {/* PRODUCT LINES */}
-      <section className="bg-white px-4 sm:px-6 md:px-12 lg:px-16 py-12 sm:py-20 md:py-28 lg:py-32">
+      {/* pb-28 on mobile keeps the last row clear of the floating WhatsApp / Quote buttons */}
+      <section className="bg-white px-4 sm:px-6 md:px-12 lg:px-16 pt-12 pb-28 sm:py-20 md:py-28 lg:py-32">
         <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-12 gap-4 sm:gap-8 mb-8 sm:mb-14 md:mb-20">
+          <div className="grid lg:grid-cols-12 gap-3 sm:gap-8 mb-8 sm:mb-14 md:mb-20">
             <div className="lg:col-span-3">
               <span className="text-[10px] uppercase tracking-[0.25em] font-semibold text-[#0A2540]/50">
-                03 / Product lines
+               / Product lines
               </span>
             </div>
 
             <div className="lg:col-span-7">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-[1.05] sm:leading-[0.98] tracking-[-0.035em] sm:tracking-[-0.045em] font-[family-name:var(--font-display)] font-semibold">
+              <h2 className="text-[1.75rem] sm:text-3xl md:text-4xl lg:text-5xl leading-[1.08] sm:leading-[0.98] tracking-[-0.035em] sm:tracking-[-0.045em] font-[family-name:var(--font-display)] font-semibold text-balance">
                 Materials for industries that keep moving.
               </h2>
             </div>
           </div>
 
-          <div className="border-t border-[#0A2540]/20">
+          {/* ───────── MOBILE (below sm): stacked, thumb-friendly rows ───────── */}
+          <div className="sm:hidden border-t border-[#0A2540]/20">
+            {CATEGORIES.map(({ number, icon: Icon, title, short, body }) => (
+              <button
+                key={title}
+                type="button"
+                onClick={() => openQuote({ category: title })}
+                aria-label={`Request a quotation for ${title}`}
+                className="group relative block w-full text-left -mx-4 px-4 py-6 border-b border-[#0A2540]/15 transition-colors duration-200 motion-reduce:transition-none active:bg-[#0A2540] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0A2540] [-webkit-tap-highlight-color:transparent] [width:calc(100%+2rem)]"
+              >
+                {/* Top meta row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full border border-[#0A2540]/20 flex items-center justify-center transition-colors duration-200 group-active:border-white/40 group-active:text-white">
+                      <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-[10px] tracking-[0.2em] uppercase font-semibold opacity-50 group-active:text-white group-active:opacity-80">
+                      {short}
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold opacity-40 tabular-nums group-active:text-white group-active:opacity-70">
+                    {number}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="mt-5 text-[1.65rem] leading-[1.05] tracking-[-0.035em] font-[family-name:var(--font-display)] font-semibold transition-colors duration-200 group-active:text-white">
+                  {title}
+                </h3>
+
+                {/* Description */}
+                <p className="mt-2.5 text-[13.5px] leading-relaxed text-[#0A2540]/60 max-w-[34ch] transition-colors duration-200 group-active:text-white/75">
+                  {body}
+                </p>
+
+                {/* Action row */}
+                <div className="mt-5 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#0A2540] transition-colors duration-200 group-active:text-white">
+                    Request a quote
+                  </span>
+                  <div className="w-10 h-10 rounded-full border border-[#0A2540]/20 flex items-center justify-center transition-all duration-300 motion-reduce:transition-none group-active:rotate-45 group-active:bg-white group-active:text-[#0A2540] group-active:border-white">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* ───────── TABLET / DESKTOP (sm and up): original design, unchanged ───────── */}
+          <div className="hidden sm:block border-t border-[#0A2540]/20">
             {CATEGORIES.map(({ number, icon: Icon, title, short, body }) => (
               <div
                 key={title}
@@ -269,7 +319,7 @@ export default function Home({ products = [] }) {
                 className="group w-full text-left border-b border-[#0A2540]/15 py-5 sm:py-7 md:py-9 lg:py-10 transition-all duration-500 sm:hover:px-3 md:hover:px-6 cursor-pointer"
               >
                 <div className="grid grid-cols-12 gap-2 sm:gap-4 md:gap-8 items-center">
-                  
+
                   {/* Number */}
                   <div className="col-span-2 sm:col-span-1">
                     <span className="text-xs font-semibold opacity-40">
