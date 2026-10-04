@@ -368,7 +368,7 @@ export default function Home({ products = [] }) {
       {/* FLOATING ACTIONS */}
       <div className="fixed bottom-4 right-4 sm:bottom-7 sm:right-7 flex flex-col gap-2 z-40">
         <a
-          href="https://wa.me/923333023307"
+          href="https://wa.me/923333499966"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Contact us on WhatsApp"

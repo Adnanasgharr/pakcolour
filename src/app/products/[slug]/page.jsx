@@ -10,13 +10,15 @@ import {
   ShieldCheck,
   Truck,
   Headset,
+  PackageX,
+  CheckCircle2,
 } from 'lucide-react';
 import { getProductBySlug } from '@/lib/contentful';
 import { getProductImage } from '@/lib/productImage';
 
 import ProductQuoteButton from '@/components/ProductQuoteButton';
+import ProductPriceCalculator from '@/components/ProductPriceCalculator';
 import Navbar from '@/components/Navbar';
-
 
 export const revalidate = 60;
 
@@ -25,9 +27,7 @@ export async function generateMetadata({ params }) {
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return {
-      title: 'Product Not Found | PAK COLOUR & CHEMICAL',
-    };
+    return { title: 'Product Not Found | PAK COLOUR & CHEMICAL' };
   }
 
   const { title, casNumber, grade, category } = product.fields;
@@ -36,10 +36,9 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${title} ${casNumber ? `(CAS: ${casNumber})` : ''} | PAK COLOUR & CHEMICAL`,
-    description: `Request bulk quotation and technical documents (MSDS/TDS) for ${title}. ${categoryName} supplied in ${grade || 'Industrial Grade'}.`,
+    description: `Request bulk quotation and technical documents for ${title}. ${categoryName} supplied in ${grade || 'Industrial Grade'}.`,
     openGraph: {
       title: `${title} | PAK COLOUR & CHEMICAL`,
-      description: `Request quotations and MSDS documentation for ${title} (${casNumber ? `CAS: ${casNumber}` : 'Industrial Grade'}).`,
       type: 'website',
       ...(image && { images: [{ url: image.url }] }),
     },
@@ -64,13 +63,22 @@ export default async function ProductDetailPage({ params }) {
   const categoryName = categoryTitle || 'Chemical & Color';
   const msdsUrl = fields.msdsDocument?.fields?.file?.url;
 
+  // Reads base price and locked unit from Contentful
+  const basePrice = fields.pricePerUnit || fields.pricePerKg || fields.price || 0;
+  const unit = fields.unit || 'Kg';
+  const isOutOfStock = Boolean(fields.isOutOfStock);
+
   const productDetails =
     `${fields.title}` +
     `${fields.casNumber ? ` (CAS: ${fields.casNumber})` : ''}` +
-    `${fields.grade ? ` - ${fields.grade}` : ''}`;
+    `${fields.grade ? ` - ${fields.grade}` : ''}` +
+    `${basePrice ? ` [Rate: PKR ${basePrice}/${unit}]` : ''}` +
+    `${isOutOfStock ? ' (Currently Out of Stock)' : ''}`;
 
   const whatsappMessage = encodeURIComponent(
-    `Hello PAK COLOUR & CHEMICAL, I would like information / a quotation for ${fields.title}.`
+    `Hello PAK COLOUR & CHEMICAL, I would like information / a quotation for ${fields.title}${
+      isOutOfStock ? ' (Currently marked Out of Stock)' : ''
+    }.`
   );
 
   const specs = [
@@ -82,7 +90,7 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
 
       <main className="flex-1 font-[family-name:var(--font-body)]">
         {/* Breadcrumb */}
@@ -99,7 +107,7 @@ export default async function ProductDetailPage({ params }) {
           </nav>
         </div>
 
-        {/* Product overview */}
+        {/* Product Overview */}
         <section className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-14">
           <div className="grid md:grid-cols-[1fr_1.1fr] gap-8 lg:gap-12 items-start">
             {/* Image */}
@@ -112,10 +120,17 @@ export default async function ProductDetailPage({ params }) {
                     fill
                     priority
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-contain p-8"
+                    className={`object-contain p-8 ${isOutOfStock ? 'grayscale opacity-75' : ''}`}
                   />
                 ) : (
                   <FlaskConical className="w-16 h-16 text-slate-300" />
+                )}
+
+                {isOutOfStock && (
+                  <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-md flex items-center gap-1.5">
+                    <PackageX className="w-4 h-4" />
+                    Out of Stock
+                  </div>
                 )}
               </div>
             </div>
@@ -128,18 +143,40 @@ export default async function ProductDetailPage({ params }) {
                     <Tag className="w-3 h-3" />
                     {categoryName}
                   </span>
+
                   {fields.grade && (
                     <span className="text-[11px] font-medium text-slate-500 border border-[#D8DEE4] px-2 py-0.5 rounded bg-white">
                       {fields.grade}
                     </span>
                   )}
+
+                  {isOutOfStock ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-700 bg-red-100 px-2.5 py-1 rounded uppercase tracking-wider border border-red-200">
+                      <PackageX className="w-3 h-3" />
+                      Out of Stock
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded uppercase tracking-wider border border-emerald-200">
+                      <CheckCircle2 className="w-3 h-3" />
+                      In Stock
+                    </span>
+                  )}
                 </div>
+
                 <h1 className="text-3xl md:text-4xl font-[family-name:var(--font-display)] font-bold text-[#0A2540] leading-tight tracking-tight">
                   {fields.title}
                 </h1>
               </div>
 
-              {/* Specification table */}
+              {/* Price Calculator with Unit locked to Contentful value */}
+              <ProductPriceCalculator
+                basePrice={basePrice}
+                defaultUnit={unit}
+                allowUnitChange={false}
+                isOutOfStock={isOutOfStock}
+              />
+
+              {/* Specifications */}
               <div className="bg-white border border-[#D8DEE4] rounded-xl overflow-hidden shadow-sm">
                 <div className="bg-[#0A2540] text-white px-5 py-3 text-xs font-semibold uppercase tracking-wider">
                   Product Specifications
@@ -148,11 +185,7 @@ export default async function ProductDetailPage({ params }) {
                   {specs.map(({ label, value, mono }) => (
                     <div key={label} className="flex justify-between gap-4 px-5 py-3.5 text-sm">
                       <dt className="text-slate-500 font-medium">{label}</dt>
-                      <dd
-                        className={`text-right font-semibold text-[#0A2540] ${
-                          mono ? 'font-mono' : ''
-                        }`}
-                      >
+                      <dd className={`text-right font-semibold text-[#0A2540] ${mono ? 'font-mono' : ''}`}>
                         {value}
                       </dd>
                     </div>
@@ -195,10 +228,7 @@ export default async function ProductDetailPage({ params }) {
               {/* Assurances */}
               <ul className="grid sm:grid-cols-3 gap-3 pt-1">
                 {ASSURANCES.map(({ icon: Icon, text }) => (
-                  <li
-                    key={text}
-                    className="flex items-start gap-2 text-xs text-slate-600 leading-snug"
-                  >
+                  <li key={text} className="flex items-start gap-2 text-xs text-slate-600 leading-snug">
                     <Icon className="w-4 h-4 text-[#0A2540] shrink-0" strokeWidth={1.75} />
                     {text}
                   </li>
@@ -207,8 +237,6 @@ export default async function ProductDetailPage({ params }) {
             </div>
           </div>
         </section>
-
-     
       </main>
     </>
   );
