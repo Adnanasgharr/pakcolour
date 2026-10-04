@@ -202,7 +202,7 @@ export default async function ProductDetailPage({ params }) {
                     className="flex-1"
                   />
                   <a
-                    href={`https://wa.me/923333023307?text=${whatsappMessage}`}
+                    href={`https://wa.me/923333499966?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-[#1F7A5C] hover:bg-[#186349] text-white font-[family-name:var(--font-display)] font-semibold px-6 py-3.5 rounded-md transition text-sm shadow-md"
